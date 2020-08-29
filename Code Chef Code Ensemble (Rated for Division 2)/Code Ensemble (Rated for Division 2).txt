@@ -1,0 +1,256 @@
+#########Code Ensemble (Rated for Division 2) #########
+
+""Help Martha - CENS20G""
+Problem  : https://www.codechef.com/problems/CENS20G
+editorial: https://discuss.codechef.com/t/cens20g-editorial/75414
+Learening:
+     A subsequence is a sequence that can be derived from another sequence by deleting some elements without changing the order of the remaining elements.
+     A subarray will always be contiguous but a subsequence need not be contiguous. so they ask subsequence so we can create any order. just have count of all the
+     moves , find x2-x1 and y2-y1 if it is greater U(if +ve) or D(if -ve) and R(if +ve) or L(if -ve) the print abs(x2-x1)+abs(y2-y1) else print NO
+     
+	My Code:
+		"""
+			#I did not even taught that max subsequence that can produce is "abs(x2-x1)+abs(y2-y1)" i did some joker stuff over there
+		"""
+
+	CP Programmer:
+		"""
+		for _ in range(int(input())):
+		    string=Counter(input())
+		    x,y=list(map(int,input().split()))
+		    ans=[]
+
+		    for j in range(int(input())):
+		        x2,y2=list(map(int,input().split()))
+		        count=0
+		        a,b=x2-x,y2-y
+		        if a>=0 and string["R"]<abs(a):
+			        print("NO")
+			        continue
+	    	        elif a<0 and string["L"]<abs(a):
+			        print("NO")
+			        continue
+		        if b>=0 and string["U"]<abs(b):
+			        print("NO")
+			        continue
+		        elif b<0 and string["D"]<abs(b):
+			        print("NO")
+			        continue
+		        print("YES",abs(a)+abs(b))
+		"""
+
+""Priya and Parity - CENS20E""
+Problem  : https://www.codechef.com/CENS2020/problems/CENS20E
+editorial: https://discuss.codechef.com/t/cens20e-editorial/75412
+Learening: 
+     1. if your solution says runtime error then you have messed something with the input part, check you have given correct variable name on i/p and used them in appropriate
+        place in the program.ie, in question they said a,b will be i/p but in your program you have written it as b,a
+     2. if you need count of only one element use ".count('element')" not Collections.Counter()
+     3. bin()->will out put steing not int so put .count('1') not .count(1)
+     4. use deque not quesue because in queue , queue.pop(0) takes linear Time  also on deque .popleft() not lpop() or leftpop()
+     5. Don't use "if i in visited.keys():" because "in" operator takes linear time instead use Hash Table "if visited[i]==False"
+     6. Read question carefully they asked to find componenets connect with same parity , not no of parity inside a component. In counting connected component problem 
+        check the way you are counting
+	"""
+	the way u are counting connected components is wrong.
+	try this
+	1
+	5 4
+	4 6 9 10 2
+	1 2
+	1 3
+	1 4
+	2 5
+	0(queries-let it be any value)
+	ur even value is 2 (it should be 1)
+	ur odd value is 3(it shoud be also 1)
+	consider connected components only not all
+	"""
+
+     DSU takes less time to implement and run than BFS and DFS
+     BFS is not alone an approach to find Connectivity/Cycle in Graph , we can also use "Disjoint Set or Union Find Algorithm (DSU)" to find connectivity in 
+     undirected graph but this method assumes "The Graph does not contains Self Loop's". Look the question constrain "the graph contains no duplicate edges or self-loops"
+	My Code Wrong answer:
+               """
+			#My idea is to find CC and for each CC take the K value find XOR each time and print odd/even count . but i screwed up in finding cp itself
+			#I did not read the question carefully. good Cp find the correct CC as per question constrain , then find overall max odd & even parity
+			$Then he find the parity of K using below formula he print respected overall max parity value
+				Bitwise XOR of odd parity and odd parity is an even parity.
+				Bitwise XOR of odd parity and even parity is an odd parity, vice-versa.
+				Bitwise XOR of even parity and even parity is an even parity.
+		
+               """
+	Cp thinker:
+		"""
+		class Graph():
+			def __init__(self,vertex,weight):
+				self.node=vertex
+				self.adjList=defaultdict(list)
+				self.weight=defaultdict(list)
+
+				for i in range(1,self.node+1):
+					self.adjList[i]=[]
+					setbit=(bin(weight[i-1])).count('1')
+					self.weight[i]=[weight[i-1],setbit,0 if setbit%2==0 else 1] #Even-0 Odd-1
+					#print(self.weight[i],i,weight[i-1])
+
+
+			def addEdge(self,start,end):
+				self.adjList[start].append(end)
+				self.adjList[end].append(start)
+
+			def __str__(self):
+				for i in range(1,self.node+1):
+					print("{} -> {} : {}".format(i,self.adjList[i],self.weight[i]))
+				return("")
+
+			def BFS(self,start,visited):
+				cc=[start]
+				queue=deque([start])
+				while queue:
+					#print(queue)
+					curVer=queue.popleft()              #VVVVVV Important to reduce TLE
+					for i in self.adjList[curVer]:
+						#print(i)
+						if visited[i]==False and self.weight[start][2]==self.weight[i][2]: #VVVVVV Important Key part of question to find CC
+							queue.append(i)
+							cc.append(i)
+							visited[i]=True
+				#print(visited)
+				return(cc,visited)
+
+			def connectedComponent(self):
+				totalCC=[]
+				visited=defaultdict(bool)
+				for i in self.adjList.keys():
+					visited[i]=False
+				for i in self.adjList.keys():
+					#print(i,visited)
+					if visited[i]==False:  #VVVVVV Important to reduce TLE
+						visited[i]=True
+						cc,visited=self.BFS(i,visited)
+						totalCC.append(cc)
+				#print(visited)
+				return(totalCC)
+
+
+			def parityOfCC(self,cc):
+				odd=0
+				even=0
+				for i in cc:
+					setbit=self.weight[i][2]
+					#print(setbit)
+					if setbit==0:
+						even+=1
+					else:
+						odd+=1
+					#print(i,setbit)
+				#print(odd,even)
+				return(odd,even)
+
+
+		def main():
+			for _ in range(Iint()):
+				w,n=[int(i) for i in input().split()]
+				weight=Ilist()
+				#print(weight)
+				g=Graph(w,weight)
+				for i in range(n):
+					a,b=Ilist()
+					g.addEdge(a,b)
+				#print(g)
+				ccList=g.connectedComponent()
+				#print(ccList)
+				oddMax=0
+				evenMax=0
+
+				for i in ccList:
+					odd,even=g.parityOfCC(i)
+					#print(odd,oddMax,even,evenMax,len(i),oddLen)
+					if odd>oddMax:
+						oddMax=odd
+					if even>evenMax:
+						evenMax=even
+				#print("oemax",oddMax,evenMax)
+
+				for i in range(Iint()):
+					q,k=Ilist()
+					setbit=(bin(k)).count('1')
+					parity=1
+					if setbit%2==0:
+						parity=0 #Even
+					if q==1:
+						if parity==0:
+							print(oddMax)
+						else:
+							print(evenMax)
+
+					elif q==2:
+						if parity==0:
+							print(evenMax)
+						else:
+							print(oddMax)
+
+
+
+
+
+		"""
+
+"Cherry and Bits - CENS20A"
+Problem  : https://www.codechef.com/CENS2020/problems/CENS20A
+editorial: https://discuss.codechef.com/t/cens20a-editorial/75404
+Learening: 
+     Differencing Array and 2D query updates in matrix give some look into it. read this problem editorial and our code again and look what output they are asking 
+     in question and what you are printing , even if your print satement has one space extra then you are.... In matrix question look for over flow.
+     Check variable name in loops and inside loop are same dont put i place la j and j place la i.
+
+	My Code:
+	        """
+			#Did not had time to solve, i used brute force and update everything every time , author stored all query in range and updated onse
+		"""
+
+	Cp thinker:
+               """
+			r,c=list(map(int,input().split()))
+			A=[] #Given Matrix
+			dp=[[0 for i in range(c+1)] for j in  range(r+1)]
+			for i in range(r):
+				A.append([int(j) for j in list(input())])
+				#print(A)
+
+			q=int(input())
+
+			#print(A,dp)
+			for i in range(q):
+				x1,y1,x2,y2=list(map(int,input().split()))
+				#print(x1,y1,x2,y2)
+				x1,y1,x2,y2=x1-1,y1-1,x2-1,y2-1
+				dp[x1][y1]+=1
+				dp[x2+1][y2+1]+=1
+				dp[x1][y2+1]-=1
+				dp[x2+1][y1]-=1
+
+			for i,v1 in enumerate(A):
+				for j,v2 in enumerate(v1):
+					if i==0 and j==0:
+						pass
+					elif i==0:
+						dp[i][j]+=dp[i][j-1]
+					elif j==0:
+						dp[i][j]+=dp[i-1][j]
+					else:
+						dp[i][j]+=dp[i-1][j]+dp[i][j-1]-dp[i-1][j-1]
+					#print(A,i,j)
+
+					if dp[i][j]%2!=0:
+						A[i][j]=1-A[i][j]
+			for i in A:
+				for j in i:
+					print(j,end="")
+				print()
+
+
+
+               """
+***********************************************************************************************************************************************************************
