@@ -1,0 +1,63 @@
+######### August Cook-Off 2020 Division 2 #########
+
+""POLYREL""
+Problem  : https://www.codechef.com/COOK121B/problems/POLYREL
+editorial: https://discuss.codechef.com/t/polyrel-editorial/75331
+Learening:
+     it's not necessary that all the data given in question are alwasys used in the solution. for question A,B,C,D few details in question can be used to create an 
+     solution. Always think of multiople input like , 0 array length, odd,even array length , -ve element in array , 0 in array. element >,<,>=,<=,= our condition.     
+	My Code:
+		"""
+			#Afraid of this simple questoion in the contest dont know how to solve this and left contest without thinking again , shame less fellow!
+		"""
+
+	CP Programmer:
+		"""
+			def main():
+			    for _ in range(Iint()):
+			    	n=Iint()
+			    	output=n
+			    	[input() for i in  range(n)]
+			    	while n>=6:
+			    		output+=n//2
+			    		n//=2
+			    	print(output)
+		"""
+
+""KFOLD ""
+Problem  : https://www.codechef.com/COOK121B/problems/KFOLD
+editorial: https://discuss.codechef.com/t/kfold-editorial/75359
+Learening:
+     Don't panic by looking the question think for a second you can find the loop hole to creack the question. IN this question to check wheather given string can be
+     folded in K times.first we need to find the no of foldes. so first N//K will give no of fold. then count the occurance of '1','0' in string. then divide the no of
+     occureance of '1' and '0' by no of fold , if it is %=0 means we can create an K fold string . then find no of occurance of 0,1 in each fold then using this one fold 
+     you can create the entire lexorgical sting.   
+	My Code Wrong answer:
+               """
+			#this solutin is from tutorial but i had no clue of the question. first i taught all string are need to be divided by 2 without clearly reading
+			#the question and started to hard code the question. i taught of creating the entire string but tutorial create one fold use it to crete full string
+               """
+	Cp thinker:
+		"""
+			def main():
+			    for _ in range(Iint()):
+				l,k=Ilist()
+				string=Counter(I())
+				a=l//k
+				if string['1']%a!=0 or string['0']%a!=0:
+					print("IMPOSSIBLE")
+					continue
+				oneCount=string['1']//a
+				zeroCount=string['0']//a
+				finalString='0'*zeroCount+'1'*oneCount
+				lexorString=''
+				for i in range(a):
+					if i%2==0:
+						lexorString+=finalString
+					else:
+						lexorString+=finalString[::-1]
+				print(lexorString)
+
+		"""
+
+***********************************************************************************************************************************************************************
